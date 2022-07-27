@@ -190,3 +190,96 @@ You will will need to make a Route.js file for each. For each route, you will ne
 | Parameter | Type  | Description              |
 | :-------- | :---- | :----------------------- |
 | `user_id` | `int` | **Required**. ID of user |
+
+## How to host on Heroku
+
+1. Create a new file called `Procfile`
+   - Add `web: node index.js` to this file. This indicates to Heroku that this app is a Node.js application
+2. In your `package.json` under the `"scripts"` object, add a new key-value pair
+   `"start": "node index.js"`
+   - Heroku will look for the start script to start running the Node.js application
+3. Push work to github
+4. Login/Register on Heroku
+5. Create new app on Heroku Dashboard
+   - Give the app a name
+   - Under the "Deployment Method" section, connect the app to github
+   - Select the repository you want to host
+   - Make sure you select the correct branch to host
+   - Enable `Automatic Deploys`, as this will update the API every time you push to Github
+   - Click on the "Deploy Branch" button
+   - Under the **Settings** tab, go to the "Config Vars" section and add in all the variables from your `.env` file.
+   - Once all environment variables have been provided (correct spelling), click on the **More** button and select `Restart all dynos`. This will just refresh the application to make sure that the environment variables have been registered.
+
+#### After following these steps, you should be able to open and use your hosted API! Congrats!
+
+<!-- Middleware -->
+<br>
+
+## Creating Middleware
+
+> Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. The next middleware function is commonly denoted by a variable named next
+
+### Dependinces needed to create the middleware
+
+- jsonwebtoken / JWT
+- config
+  > `npm i jsonwebtoken config`
+
+### What is jsonwebtoken
+
+<a href="https://jwt.io/introduction">Click here for more</a>
+
+> JWTs can be encrypted to also provide secrecy between parties, we will focus on signed tokens. Signed tokens can verify the integrity of the claims contained within it, while encrypted tokens hide those claims from other parties. When tokens are signed using public/private key pairs, the signature also certifies that only the party holding the private key is the one that signed it.
+
+### What is config
+
+<a href="https://www.npmjs.com/package/config">Click here for more</a>
+
+> Node-config organizes hierarchical configurations for your app deployments.
+> It lets you define a set of default parameters, and extend them for different deployment environments (development, qa, staging, production, etc.).
+
+## Step-by-step to create your middleware
+
+1. Create a new folder called `middleware`
+
+   - create a file within `middleware` called `auth.js`
+
+   ```JavaScript
+     const jwt = require("jsonwebtoken");
+     const config = require("config");
+
+     module.exports = function (req, res, next) {
+       //Get token from header
+       const token = req.header("x-auth-token");
+
+       //Check if not token
+       if (!token) {
+         return res.status(401).json({ msg: "No token, authorisation denied" });
+       }
+
+       try {
+         const decoded = jwt.verify(token, config.get("jwtSecret"));
+
+         req.user = decoded.user;
+         next();
+       } catch (err) {
+         res.status(401).json({ msg: "Token is not valid" });
+       }
+     };
+   ```
+
+2. Add **_jwtSecret_** to your `.env` file
+
+   - create a file within `config` called `default.json`
+
+   ```Javascript
+      DB_HOST=clever cloud host
+      DB_USER=clever cloud user
+      DB_PASS=clever cloud password
+      DB_NAME=clever cloud database name
+      DB_PORT=clever cloud port
+      PORT=6969
+      jwtSecret=Nobody_should_know_this
+   ```
+
+#### After following these steps, you should be able to import and attach your middleware to your routes! Congrats!

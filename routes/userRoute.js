@@ -1,16 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const con = require("../lib/db_connection");
+const con = require("../lib/dbConnection");
 
 router.get("/", (req, res) => {
   try {
-    con.query("SHOW tables", (err, result) => {
+    con.query("SELECT * FROM users", (err, result) => {
       if (err) throw err;
       res.send(result);
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send(error);
   }
 });
 

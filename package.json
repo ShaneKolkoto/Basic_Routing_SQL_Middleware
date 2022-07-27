@@ -1,5 +1,5 @@
 {
-  "name": "basic_routes",
+  "name": "mysql-ecommerce",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,8 +15,5 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "mysql": "^2.18.1"
-  },
-  "engines": {
-    "node": "^10"
   }
 }
