@@ -1,5 +1,2 @@
 /node_modules
 .env
-ecommerce_structure_for_clever_cloud.sql
-Procfile
-/middleware
